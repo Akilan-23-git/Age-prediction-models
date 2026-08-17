@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { ArrowRight, Sparkles, ScanFace, AudioLines, ShieldCheck, Zap } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function LandingPage() {
   const session = await getServerSession(authOptions);
 

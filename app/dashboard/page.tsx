@@ -5,6 +5,8 @@ import { authOptions } from "@/lib/auth";
 import ProjectCard from "@/components/ProjectCard";
 import { Activity, ShieldCheck } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
