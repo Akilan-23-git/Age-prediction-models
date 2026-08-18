@@ -8,7 +8,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-ai-age-prediction-hub-2025",
+  secret: process.env.NEXTAUTH_SECRET || "ai-age-prediction-hub-super-secret-key-32chars-minimum-prod",
   providers: [
     CredentialsProvider({
       name: "Credentials",

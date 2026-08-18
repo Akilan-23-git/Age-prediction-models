@@ -2,12 +2,12 @@ const { execSync } = require("child_process");
 
 // Set safe fallback build-time environment variables for static generation & Prisma client codegen
 if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=require";
-  console.log("[Build] Provided build-time placeholder DATABASE_URL for Prisma code generation.");
+  process.env.DATABASE_URL = "postgresql://neondb_owner:npg_R2do6JACFIzn@ep-fancy-pine-ay10whqg.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require";
+  console.log("[Build] Provided build-time DATABASE_URL for Prisma code generation.");
 }
 
 if (!process.env.NEXTAUTH_SECRET) {
-  process.env.NEXTAUTH_SECRET = "fallback-secret-ai-age-prediction-hub-build-2025";
+  process.env.NEXTAUTH_SECRET = "ai-age-prediction-hub-super-secret-key-32chars-minimum-prod";
 }
 
 if (!process.env.NEXTAUTH_URL) {

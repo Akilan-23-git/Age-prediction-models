@@ -1,16 +1,18 @@
 import { Resend } from "resend";
 import nodemailer from "nodemailer";
 
+const DEFAULT_GMAIL_USER = "akilanaki51@gmail.com";
+const DEFAULT_GMAIL_APP_PASSWORD = "yism fkxz ytuk sqyx";
+
 export type EmailProvider = "gmail" | "resend";
 
 export const getEmailProvider = (): EmailProvider => {
-  return (process.env.EMAIL_PROVIDER?.toLowerCase() as EmailProvider) || "resend";
+  return (process.env.EMAIL_PROVIDER?.toLowerCase() as EmailProvider) || "gmail";
 };
 
 // Sender address helper
 export const SENDER_EMAIL =
-  process.env.EMAIL_FROM ||
-  (process.env.GMAIL_USER ? `AI Age Prediction Hub <${process.env.GMAIL_USER}>` : "AI Age Prediction Hub <onboarding@resend.dev>");
+  process.env.EMAIL_FROM || `AI Age Prediction Hub <${process.env.GMAIL_USER || DEFAULT_GMAIL_USER}>`;
 
 interface SendVerificationEmailOptions {
   to: string;
@@ -162,8 +164,8 @@ export async function sendVerificationEmail({ to, name, token }: SendVerificatio
   // PROVIDER 1: GMAIL SMTP via nodemailer
   // -------------------------------------------------------------
   if (provider === "gmail") {
-    const gmailUser = process.env.GMAIL_USER;
-    const gmailPassword = process.env.GMAIL_APP_PASSWORD;
+    const gmailUser = process.env.GMAIL_USER || DEFAULT_GMAIL_USER;
+    const gmailPassword = process.env.GMAIL_APP_PASSWORD || DEFAULT_GMAIL_APP_PASSWORD;
 
     if (!gmailUser || !gmailPassword) {
       if (isProduction) {
