@@ -145,16 +145,38 @@ export function getVerificationEmailHtml(name: string, verifyUrl: string): strin
   `.trim();
 }
 
+export function getAppUrl(): string {
+  const configuredUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL;
+  if (
+    configuredUrl &&
+    !configuredUrl.includes("your-app") &&
+    !configuredUrl.includes("your-domain") &&
+    !configuredUrl.includes("your-production-domain") &&
+    !configuredUrl.includes("example.com")
+  ) {
+    return configuredUrl.replace(/\/$/, "");
+  }
+
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return "https://age-prediction-models-f3kp.vercel.app";
+  }
+
+  return configuredUrl || "http://localhost:3000";
+}
+
 /**
  * Universal verification email sender supporting both Resend and Gmail SMTP
  */
 export async function sendVerificationEmail({ to, name, token }: SendVerificationEmailOptions) {
-  const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    process.env.NEXTAUTH_URL ||
-    process.env.URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-
+  const appUrl = getAppUrl();
   const verifyUrl = `${appUrl.replace(/\/$/, "")}/verify?token=${encodeURIComponent(token)}`;
   const provider = getEmailProvider();
   const isProduction = process.env.NODE_ENV === "production";
