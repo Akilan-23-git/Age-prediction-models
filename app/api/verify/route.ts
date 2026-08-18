@@ -27,10 +27,24 @@ export async function POST(req: NextRequest) {
         email: result.user?.email,
       },
     });
-  } catch (error) {
-    console.error("[Verify API Error]:", error);
+  } catch (error: unknown) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error("[Verify API Error]:", errorMsg);
+
+    let userFriendlyError = "An unexpected error occurred during email verification.";
+    if (
+      errorMsg.includes("must start with the protocol") ||
+      errorMsg.includes("DATABASE_URL") ||
+      errorMsg.includes("Can't reach database server")
+    ) {
+      userFriendlyError = "Database connection error: DATABASE_URL is not configured with a valid PostgreSQL connection string.";
+    }
+
     return NextResponse.json(
-      { error: "An unexpected error occurred during email verification." },
+      {
+        error: userFriendlyError,
+        details: process.env.NODE_ENV !== "production" ? errorMsg : undefined,
+      },
       { status: 500 }
     );
   }

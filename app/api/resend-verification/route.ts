@@ -61,10 +61,34 @@ export async function POST(req: NextRequest) {
       message: `A new verification email has been sent to ${normalizedEmail}.`,
       devVerifyUrl: emailResult.verifyUrl,
     });
-  } catch (error) {
-    console.error("[Resend Verification Error]:", error);
+  } catch (error: unknown) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error("[Resend Verification Error]:", errorMsg);
+
+    let userFriendlyError = "Failed to send verification email. Please try again.";
+
+    if (
+      errorMsg.includes("must start with the protocol") ||
+      errorMsg.includes("DATABASE_URL") ||
+      errorMsg.includes("Can't reach database server")
+    ) {
+      userFriendlyError = "Database connection error: DATABASE_URL is not configured with a valid PostgreSQL connection string.";
+    } else if (errorMsg.includes("Table") && errorMsg.includes("does not exist")) {
+      userFriendlyError = "Database schema not initialized. Please push database migrations.";
+    } else if (
+      errorMsg.includes("Gmail") ||
+      errorMsg.includes("Resend") ||
+      errorMsg.includes("email delivery failed") ||
+      errorMsg.includes("GMAIL_USER")
+    ) {
+      userFriendlyError = `Email delivery service error: ${errorMsg}`;
+    }
+
     return NextResponse.json(
-      { error: "Failed to send verification email. Please try again." },
+      {
+        error: userFriendlyError,
+        details: process.env.NODE_ENV !== "production" ? errorMsg : undefined,
+      },
       { status: 500 }
     );
   }
