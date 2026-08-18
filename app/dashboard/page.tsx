@@ -8,7 +8,12 @@ import { Activity, ShieldCheck } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+  let session = null;
+  try {
+    session = await getServerSession(authOptions);
+  } catch (error) {
+    session = null;
+  }
 
   if (!session?.user) {
     redirect("/login");

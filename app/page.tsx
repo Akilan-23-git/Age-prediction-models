@@ -7,7 +7,12 @@ import { ArrowRight, Sparkles, ScanFace, AudioLines, ShieldCheck, Zap } from "lu
 export const dynamic = "force-dynamic";
 
 export default async function LandingPage() {
-  const session = await getServerSession(authOptions);
+  let session = null;
+  try {
+    session = await getServerSession(authOptions);
+  } catch (error) {
+    session = null;
+  }
 
   return (
     <div className="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative overflow-hidden">
